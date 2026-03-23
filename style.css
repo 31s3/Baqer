@@ -21,10 +21,8 @@ body { margin: 0; font-family: 'Cairo', sans-serif; background-color: #111; disp
 .side-menu { position: absolute; top: 0; right: -105%; width: 290px; height: 100%; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); padding: 25px 20px; box-sizing: border-box; z-index: 1000; }
 .side-menu.active { right: 0; }
 .profile-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-
-/* تم تعديل الإطار ليكون أكثر سُمكاً وجمالاً لتبدو عليه ألوان الحيوانات */
-.avatar-ring { padding: 6px; border-radius: 50%; background: linear-gradient(45deg, var(--primary), var(--accent)); transition: 0.5s; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(0,0,0,0.5);}
-.avatar { width: 55px; height: 55px; border-radius: 50%; border: 3px solid #111; display: block; object-fit: cover; background: #222;}
+.avatar-ring { padding: 4px; border-radius: 50%; background: linear-gradient(45deg, var(--primary), var(--accent)); transition: 0.3s; display: flex; align-items: center; justify-content: center;}
+.avatar { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #111; display: block; object-fit: cover; background: #222;}
 .id-tag { background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; color: var(--primary); }
 .menu-list { list-style: none; padding: 0; margin-top: 15px; height: 60%; overflow-y: auto;}
 .menu-list li { padding: 14px; border-radius: 12px; cursor: pointer; font-size: 0.95rem; font-weight: bold; transition: 0.2s; display: flex; align-items: center; gap: 10px; margin-bottom: 8px; border: 1px solid transparent; }
@@ -69,6 +67,8 @@ body { margin: 0; font-family: 'Cairo', sans-serif; background-color: #111; disp
 
 .online-players-bar { display: flex; justify-content: space-between; gap: 5px; width: 100%; padding: 10px; border-radius: 20px; box-sizing: border-box; }
 .online-player { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: bold; flex: 1; text-align: center; }
+.online-player img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); margin-bottom: 5px; box-shadow: 0 5px 10px rgba(0,0,0,0.3); }
+.online-player.me img { border-color: #10b981; }
 .score-badge { background: rgba(0,0,0,0.5); color: white; padding: 4px 0; width: 100%; max-width: 50px; text-align: center; border-radius: 10px; margin-top: 5px; border: 1px solid rgba(255,255,255,0.1); font-size: 0.6rem; }
 .exit-btn { background: rgba(239, 68, 68, 0.8); margin-top: auto; border: 1px solid rgba(239, 68, 68, 0.5); }
 .stage-badge { background: var(--primary); color: white; padding: 5px 15px; border-radius: 10px; font-weight: bold; font-size: 0.85rem;}
@@ -76,7 +76,7 @@ body { margin: 0; font-family: 'Cairo', sans-serif; background-color: #111; disp
 .radar-spinner { width: 80px; height: 80px; border: 2px solid rgba(99, 102, 241, 0.1); border-top: 3px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px auto; }
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-/* المتجر */
+/* المتجر العصري */
 .store-header { text-align: center; margin-bottom: 15px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
 .store-header p { margin: 0; font-size: 0.9rem; color: #aaa; }
 .store-balance { font-size: 2rem; font-weight: 900; color: #fde047; text-shadow: 0 0 20px rgba(253, 224, 71, 0.4); margin-top: 5px; }
@@ -89,14 +89,12 @@ body { margin: 0; font-family: 'Cairo', sans-serif; background-color: #111; disp
 .store-item-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); border-color: var(--primary); }
 .item-icon-large { font-size: 3rem; margin-bottom: 10px; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.4)); transition: 0.3s; }
 .store-item-card img.item-icon-large { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid white; }
-.store-item-card .frame-preview { width: 60px; height: 60px; border-radius: 50%; margin-bottom: 10px; border: 3px solid #111; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+.store-item-card .frame-preview { width: 60px; height: 60px; border-radius: 50%; margin-bottom: 10px; border: 2px solid transparent; }
 .item-name { margin: 0 0 10px 0; font-size: 0.85rem; font-weight: 900; color: white; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 .price-btn { width: 100%; background: linear-gradient(45deg, #f59e0b, #d97706); color: white; border: none; padding: 8px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 0.9rem; transition: 0.2s;}
 .price-btn:active { transform: scale(0.95); }
-
-/* تنسيق الإنجازات الجديد */
-.achievements-list { display: flex; flex-direction: column; gap: 10px; }
-.ach-card { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s;}
-.ach-card.locked { opacity: 0.5; filter: grayscale(100%); border-color: #333;}
-.ach-card.unlocked { border-color: var(--primary); background: rgba(99,102,241,0.15); box-shadow: 0 5px 15px rgba(99,102,241,0.2);}
-.ach-icon { font-size: 2rem; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
+.achievements-list { display: flex; flex-direction: column; gap: 8px; }
+.ach-card { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+.ach-card.locked { opacity: 0.5; filter: grayscale(100%); }
+.ach-card.unlocked { border-color: var(--primary); background: rgba(99,102,241,0.1); }
+                                                                                                                             
