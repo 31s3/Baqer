@@ -306,3 +306,4 @@ function exitToMain() {
 
 // تشغيل الواجهة
 updateGlobalUI();
+        
