@@ -1,5 +1,5 @@
 // ==========================================
-// 1. إعدادات السيرفر (Firebase Configuration) الحقيقية
+// 1. إعدادات السيرفر (Firebase Configuration)
 // ==========================================
 const firebaseConfig = {
     apiKey: "AIzaSyAN_YWsXr07D_Gi-J1YUyP5SQK9_tAp8Gw",
@@ -12,7 +12,7 @@ const firebaseConfig = {
 // تهيئة الاتصال بالسيرفر
 firebase.initializeApp(firebaseConfig);
 const database = firebase.database();
-let currentRoomRef = null;
+let currentRoomRef = null; 
 
 // ==========================================
 // 2. بيانات اللاعب والصوتيات
@@ -44,13 +44,13 @@ function updateMusicVol(val) { bgMusic.volume = val / 100; }
 function updateSfxVol(val) { sfxVolumeVal = val / 100; }
 
 // ==========================================
-// 3. بنك الأسئلة والمراحل
+// 3. بنك الأسئلة (المراحل A, B, C, D)
 // ==========================================
 let qDB = {
-    A: [ { q: "ما هي عاصمة العراق؟", a: ["البصرة", "بغداد", "أربيل"], c: 1 }, { q: "ما هو الكوكب الأحمر؟", a: ["الزهرة", "المشتري", "المريخ"], c: 2 } ],
-    B: [ { img: "https://images.unsplash.com/photo-1543349689-9a4d426bee8e?w=300", q: "أين يقع هذا المعلم؟", a: ["لندن", "باريس", "برلين"], c: 1 } ],
+    A: [ { q: "ما هي عاصمة العراق؟", a: ["البصرة", "بغداد", "أربيل"], c: 1 }, { q: "ما هو الكوكب الأحمر؟", a: ["الزهرة", "المشتري", "المريخ"], c: 2 }, { q: "أكبر محيط في العالم؟", a: ["الهادئ", "الهندي", "الأطلسي"], c: 0 } ],
+    B: [ { img: "https://images.unsplash.com/photo-1543349689-9a4d426bee8e?w=300", q: "أين يقع هذا المعلم؟", a: ["لندن", "باريس", "برلين"], c: 1 }, { img: "https://images.unsplash.com/photo-1539650116574-1ef250440bf0?w=300", q: "في أي دولة توجد هذه الأهرامات؟", a: ["مصر", "المكسيك", "السودان"], c: 0 } ],
     C: [ { q: "اكتب اسم عاصمة فرنسا:", ans: "باريس" }, { q: "ما هو ناتج 5 مضروباً في 6؟", ans: "30" } ],
-    D: [ { text: "الأسد هو حيوان من الثدييات يُلقب بملك الغابة.", q: "بماذا يُلقب الأسد حسب النص؟", a: ["المفترس", "ملك الغابة", "الأسرع"], c: 1 } ]
+    D: [ { text: "الأسد هو حيوان من الثدييات يُلقب بملك الغابة، ويتميز بالسرعة.", q: "بماذا يُلقب الأسد حسب النص؟", a: ["المفترس", "ملك الغابة", "الأسرع"], c: 1 } ]
 };
 let availableQs = { A:[], B:[], C:[], D:[] };
 function getQuestion(stageType) {
@@ -60,7 +60,7 @@ function getQuestion(stageType) {
 }
 
 // ==========================================
-// 4. نظام القائمة الجانبية والنوافذ (تم إصلاحه)
+// 4. القائمة الجانبية والنوافذ
 // ==========================================
 const titlesData = [
     { name: "مبتدئ", req: 0, icon: "🥚" }, { name: "هاوي", req: 100, icon: "🥉" },
@@ -79,34 +79,15 @@ function updateGlobalUI() {
 
 const achievements = []; for(let i = 1; i <= 30; i++) achievements.push({ id: i, name: `تحدي المستوى ${i}`, desc: `احصل على ${i * 100} نقطة إنجاز`, reqPoints: i * 100 });
 
-function toggleMenu(e) { 
-    if(e) e.stopPropagation(); 
-    playSfx('menu'); 
-    const menu = document.getElementById('sideMenu'); 
-    const overlay = document.getElementById('sidebarOverlay'); 
-    menu.classList.toggle('active'); 
-    overlay.style.display = menu.classList.contains('active') ? 'block' : 'none'; 
-}
-
-function closeSidebarOutside(e) { 
-    const menu = document.getElementById('sideMenu'); 
-    if (menu.classList.contains('active')) { 
-        menu.classList.remove('active'); 
-        document.getElementById('sidebarOverlay').style.display = 'none'; 
-    } 
-}
+function toggleMenu(e) { if(e) e.stopPropagation(); playSfx('menu'); const menu = document.getElementById('sideMenu'); const overlay = document.getElementById('sidebarOverlay'); menu.classList.toggle('active'); overlay.style.display = menu.classList.contains('active') ? 'block' : 'none'; }
+function closeSidebarOutside(e) { const menu = document.getElementById('sideMenu'); if (menu.classList.contains('active')) { menu.classList.remove('active'); document.getElementById('sidebarOverlay').style.display = 'none'; } }
 
 function openModal(type) {
     playSfx('menu'); 
     const title = document.getElementById('modalTitle'); 
     const body = document.getElementById('modalBody'); 
     document.getElementById('modalOverlay').style.display = 'flex';
-    
-    // إغلاق القائمة الجانبية عند فتح أي نافذة
-    if(document.getElementById('sideMenu').classList.contains('active')) {
-        document.getElementById('sideMenu').classList.remove('active');
-        document.getElementById('sidebarOverlay').style.display = 'none';
-    }
+    if(document.getElementById('sideMenu').classList.contains('active')) { document.getElementById('sideMenu').classList.remove('active'); document.getElementById('sidebarOverlay').style.display = 'none'; }
 
     if (type === 'developer') {
         title.innerText = "حساب المطور 👨‍💻";
@@ -115,7 +96,7 @@ function openModal(type) {
     else if (type === 'achievements') {
         title.innerText = "إنجازات اللعبة 🏅";
         let content = `<div class="achievements-list">`;
-        achievements.forEach(ach => { let isUnlocked = userData.points >= ach.reqPoints; content += `<div class="ach-card ${isUnlocked ? 'unlocked' : 'locked'}"><div><b>${ach.name}</b><br><small style="color:#aaa;">${ach.desc}</small></div><div style="font-size:1.5rem;">${isUnlocked ? '🏆' : '🔒'}</div></div>`; });
+        achievements.forEach(ach => { let isUnl = userData.points >= ach.reqPoints; content += `<div class="ach-card ${isUnl ? 'unlocked' : 'locked'}"><div><b>${ach.name}</b><br><small style="color:#aaa;">${ach.desc}</small></div><div style="font-size:1.5rem;">${isUnl ? '🏆' : '🔒'}</div></div>`; });
         body.innerHTML = content + `</div>`;
     }
     else if (type === 'settings') {
@@ -124,11 +105,11 @@ function openModal(type) {
     }
     else if (type === 'help') {
         title.innerText = "دليل اللعبة ❓";
-        body.innerHTML = `<div style="line-height:2; font-size:0.9rem; text-align:justify; max-height:400px; overflow-y:auto; padding-right:5px;"><h3 style="color:var(--primary);">نظام المباريات ⚔️</h3><p>المباراة تتكون من 4 مراحل (خيارات، صور، كتابة، تحليل نص). أجب بشكل صحيح لتنال 25 نقطة لكل مرحلة.</p><h3 style="color:var(--primary);">الفوز بالمباراة 🏆</h3><p>إذا أكملت الـ 4 مراحل بنجاح (100 نقطة) ستحصل على 25 عملة ذهبية و 20 نقطة إنجاز عالمية.</p></div>`;
+        body.innerHTML = `<div style="line-height:2; font-size:0.9rem; text-align:justify; max-height:400px; overflow-y:auto; padding-right:5px;"><h3 style="color:var(--primary);">نظام المباريات ⚔️</h3><p>المباراة تتكون من 4 مراحل. لن تبدأ المباراة الأونلاين إلا بعد دخول لاعب آخر.</p></div>`;
     }
     else if (type === 'admin') {
         title.innerText = "لوحة التحكم 🛠️";
-        body.innerHTML = `<div style="display:flex; flex-direction:column; gap:10px;"><button class="premium-btn primary-btn" onclick="playSfx('play'); alert('تم تفعيل أوامر الإدارة!')">لوحة الأوامر 💻</button><button class="premium-btn" style="background:rgba(255,255,255,0.1); color:white;" onclick="playSfx('menu'); alert('تم الإضافة!')">إضافة مميزات ➕</button><h3 style="border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:5px;">إدارة اللاعبين:</h3><div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:10px; display:flex; justify-content:space-between;"><span>Ali_2026</span><button style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:5px;" onclick="alert('تم الحظر 🚫')">حظر</button></div></div>`;
+        body.innerHTML = `<div style="display:flex; flex-direction:column; gap:10px;"><button class="premium-btn primary-btn" onclick="playSfx('play'); alert('مفعل!')">لوحة الأوامر 💻</button></div>`;
     }
     else if (type === 'account') {
         title.innerText = "الحساب 👤";
@@ -137,7 +118,7 @@ function openModal(type) {
     else if (type === 'store') {
         title.innerText = "المتجر الملكي 🛒";
         let content = `<p style="text-align:center;">رصيدك: 🪙 <b style="color:gold;">${userData.coins}</b></p><div class="grid-store">`;
-        for(let i=0; i<20; i++) { let randID = Math.floor(Math.random() * 89999) + 1000; content += `<div class="store-item"><h3 style="color:var(--primary); margin:0 0 10px 0;">🆔 ${randID}</h3><button class="buy-btn" onclick="playSfx('play'); alert('تم شراء المعرف ${randID}')">💰 500</button></div>`; }
+        for(let i=0; i<20; i++) { let randID = Math.floor(Math.random() * 89999) + 1000; content += `<div class="store-item"><h3 style="color:var(--primary); margin:0 0 10px 0;">🆔 ${randID}</h3><button class="buy-btn" onclick="playSfx('play'); alert('تم شراء ${randID}')">💰 500</button></div>`; }
         body.innerHTML = content + `</div>`;
     }
     else if (type === 'titles') {
@@ -153,53 +134,82 @@ function promptNameChange() {
     if (userData.lastChangeDate !== today) { userData.nameChangesToday = 0; userData.lastChangeDate = today; }
     if (userData.nameChangesToday >= 2) { alert("⚠️ استنفدت الحد اليومي لتغيير الاسم!"); return; }
     let newName = prompt("أدخل الاسم الجديد (3 أحرف على الأقل):");
-    if (newName && newName.trim().length >= 3) { userData.username = newName.trim(); userData.nameChangesToday++; updateGlobalUI(); openModal('account'); alert(`🎉 تم تغيير الاسم! متبقي: ${2 - userData.nameChangesToday}`); }
+    if (newName && newName.trim().length >= 3) { userData.username = newName.trim(); userData.nameChangesToday++; updateGlobalUI(); openModal('account'); alert(`🎉 تم التغيير! متبقي: ${2 - userData.nameChangesToday}`); }
 }
 
 function closeModal() { playSfx('menu'); document.getElementById('modalOverlay').style.display = 'none'; }
 document.getElementById('modalOverlay').onclick = function(e) { if(e.target === this) closeModal(); };
 
 // ==========================================
-// 5. نظام المباريات (الذكاء الاصطناعي والأونلاين)
+// 5. نظام المباريات الأونلاين الحقيقي
 // ==========================================
 let matchTimer, matchTimeLeft = 15;
 let currentMatchStage = 0; 
 let currentMatchScore = 0;
 let matchMode = 'ai'; 
 let currentQData = null;
+let matchStarted = false; // لتتبع حالة بدء المباراة الأونلاين
 
 function startMatch(mode) {
-    playSfx('play'); matchMode = mode; currentMatchStage = 0; currentMatchScore = 0;
+    playSfx('play'); matchMode = mode; currentMatchStage = 0; currentMatchScore = 0; matchStarted = false;
     
     document.getElementById('menuIconBtn').style.display = 'none';
     document.getElementById('mainScreen').style.display = 'none';
     document.getElementById('gameMatchScreen').style.display = 'flex';
     
+    // تصفير وإخفاء منطقة الأسئلة مبدئياً
+    document.getElementById('onlineQuizArea').style.display = 'none';
+    document.getElementById('qImageContainer').style.display = 'none';
+    document.getElementById('qTextContainer').style.display = 'none';
+    document.getElementById('matchOptionsContainer').style.display = 'none';
+    document.getElementById('matchInputContainer').style.display = 'none';
+
     if(mode === 'online') {
         document.getElementById('matchPlayersBar').style.display = 'flex';
+        document.getElementById('waitingArea').style.display = 'block';
+        document.querySelector('#waitingArea h3').innerText = "جارٍ البحث عن منافسين...";
         joinOnlineRoom();
     } else {
         document.getElementById('matchPlayersBar').style.display = 'none';
+        document.getElementById('waitingArea').style.display = 'none';
+        document.getElementById('onlineQuizArea').style.display = 'block';
         loadMatchStage();
     }
     updateMatchUI();
 }
 
 function joinOnlineRoom() {
-    document.getElementById('matchPlayersBar').innerHTML = `<h3 style="color:white; width:100%; text-align:center;">جارٍ الاتصال بالسيرفر...</h3>`;
+    // الاتصال بقاعدة بيانات Firebase
     currentRoomRef = database.ref('matches/global_room/players/' + userData.playerID);
     currentRoomRef.set({ name: userData.username, score: 0 });
+    
+    // عند انسحاب اللاعب يتم مسحه من السيرفر
     currentRoomRef.onDisconnect().remove();
 
+    // الاستماع لعدد ونقاط اللاعبين الموجودين
     database.ref('matches/global_room/players').on('value', (snapshot) => {
-        const players = snapshot.val();
-        renderOnlinePlayers(players);
+        const playersObj = snapshot.val();
+        if(!playersObj) return;
+
+        renderOnlinePlayers(playersObj);
+
+        // فحص عدد اللاعبين المتصلين
+        const playerCount = Object.keys(playersObj).length;
+        
+        // إذا كان هناك لاعبان أو أكثر، ولم تبدأ المباراة بعد
+        if (playerCount >= 2 && !matchStarted) {
+            matchStarted = true;
+            document.getElementById('waitingArea').style.display = 'none';
+            document.getElementById('onlineQuizArea').style.display = 'block';
+            loadMatchStage();
+        } else if (playerCount < 2 && !matchStarted) {
+            // تحديث نص الانتظار في حال كان اللاعب وحده
+            document.querySelector('#waitingArea h3').innerText = "في انتظار دخول لاعب آخر للبدء...";
+        }
     });
-    loadMatchStage();
 }
 
 function renderOnlinePlayers(playersObj) {
-    if(!playersObj) return;
     let html = "";
     Object.keys(playersObj).forEach(key => {
         let p = playersObj[key]; let isMe = (key === userData.playerID);
@@ -233,7 +243,7 @@ function loadMatchStage() {
     matchTimer = setInterval(() => {
         matchTimeLeft--; progress.style.width = (matchTimeLeft / 15) * 100 + "%";
         if(matchTimeLeft <= 3 && matchTimeLeft > 0) playSfx('timer');
-        if(matchTimeLeft <= 0) { playSfx('wrong'); handleAnswer(false); }
+        if(matchTimeLeft <= 0) { playSfx('wrong'); handleAnswer(false); } // إذا انتهى الوقت تعتبر إجابة خاطئة
     }, 1000);
 }
 
@@ -258,10 +268,16 @@ function handleAnswer(isCorrect) {
     clearInterval(matchTimer);
     if(isCorrect) {
         playSfx('correct'); currentMatchScore += 25; 
-        if(matchMode === 'online' && currentRoomRef) currentRoomRef.update({ score: currentMatchScore });
+        
+        // إرسال النقطة للسيرفر ليراها خصمك فوراً
+        if(matchMode === 'online' && currentRoomRef) {
+            currentRoomRef.update({ score: currentMatchScore });
+        }
     } else { playSfx('wrong'); }
     
-    updateMatchUI(); currentMatchStage++; loadMatchStage();
+    updateMatchUI(); 
+    currentMatchStage++; 
+    loadMatchStage();
 }
 
 function updateMatchUI() { document.getElementById('matchScoreDisplay').innerText = `نقاط المباراة: ${currentMatchScore}`; }
@@ -275,12 +291,18 @@ function endMatch() {
 }
 
 function exitToMain() {
-    playSfx('menu'); clearInterval(matchTimer);
+    playSfx('menu'); 
+    clearInterval(matchTimer);
     document.getElementById('gameMatchScreen').style.display = 'none';
     document.getElementById('mainScreen').style.display = 'flex';
     document.getElementById('menuIconBtn').style.display = 'block'; 
-    if(currentRoomRef) { currentRoomRef.remove(); database.ref('matches/global_room/players').off(); }
+    
+    // مغادرة غرفة الأونلاين ومسح اسمك منها لكي لا تُحتسب كلاعب نشط
+    if(currentRoomRef) { 
+        currentRoomRef.remove(); 
+        database.ref('matches/global_room/players').off(); 
+    }
 }
 
-// تشغيل الواجهة المبدئية
+// تشغيل الواجهة
 updateGlobalUI();
