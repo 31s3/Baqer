@@ -11,17 +11,17 @@ const database = firebase.database();
 let currentRoomRef = null; 
 
 // ==========================================
-// 1. بيانات الحساب
+// 1. بيانات الحساب (تم إضافة ميزة الصورة والإطار)
 // ==========================================
 let userData = { 
     username: "Baqer Hamed", 
     playerID: "885421",
-    coins: 50000, 
-    points: 0, // نقطة البداية
+    coins: 50000, // رصيد إضافي للتجربة
+    points: 12450, 
     nameChangesToday: 0, 
     lastChangeDate: new Date().toDateString(),
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Baqer",
-    frame: "linear-gradient(45deg, var(--primary), var(--accent))" 
+    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Baqer", // الصورة الافتراضية
+    frame: "linear-gradient(45deg, var(--primary), var(--accent))" // الإطار الافتراضي
 };
 let isAudioInit = false;
 
@@ -42,9 +42,9 @@ function updateMusicVol(val) { bgMusic.volume = val / 100; }
 function updateSfxVol(val) { sfxVolumeVal = val / 100; }
 
 // ==========================================
-// 2. تحديث واجهة المستخدم
+// 2. تحديث واجهة المستخدم (تغيير الصورة والإطار)
 // ==========================================
-const titlesData = [ { name: "مبتدئ", req: 0, icon: "🥚" }, { name: "هاوي", req: 1000, icon: "🥉" }, { name: "محترف", req: 5000, icon: "🥈" }, { name: "خبير", req: 20000, icon: "🥇" }, { name: "أسطورة", req: 50000, icon: "💎" }, { name: "إمبراطور", req: 100000, icon: "👑" } ];
+const titlesData = [ { name: "مبتدئ", req: 0, icon: "🥚" }, { name: "هاوي", req: 100, icon: "🥉" }, { name: "محترف", req: 500, icon: "🥈" }, { name: "خبير", req: 1000, icon: "🥇" }, { name: "أسطورة", req: 5000, icon: "💎" }, { name: "ملك الذكاء", req: 10000, icon: "👑" } ];
 function getCurrentTitle() { let current = titlesData[0]; for (let i = 0; i < titlesData.length; i++) if (userData.points >= titlesData[i].req) current = titlesData[i]; return current; }
 
 function updateGlobalUI() {
@@ -53,46 +53,34 @@ function updateGlobalUI() {
     document.getElementById('sideUsername').innerHTML = `${userData.username} <br><small style="color:var(--primary); font-size:0.8rem; font-weight:bold;">[${getCurrentTitle().icon} ${getCurrentTitle().name}]</small>`;
     document.getElementById('sideID').innerText = userData.playerID;
     
+    // تطبيق الصورة والإطار المشتراة
     document.getElementById('sideAvatarImg').src = userData.avatar;
     document.getElementById('sideAvatarFrame').style.background = userData.frame;
 }
 
 // ==========================================
-// 3. بنك المتجر (توليد الـ IDs، إطارات الحيوانات، الصور)
+// 3. بنك المتجر (توليد الـ IDs، الإطارات، الصور)
 // ==========================================
 const storeDB = { ids: [], frames: [], avatars: [], gifts: [], reactions: [] };
 
 // 1. توليد 100 رقم ID متدرج الأسعار
-for(let i=1; i<=3; i++) storeDB.ids.push({ name: `ID: ${i}`, val: `${i}`, price: 100000, bg: "rgba(255, 215, 0, 0.2)" }); 
-for(let i=10; i<=14; i++) storeDB.ids.push({ name: `ID: ${i}`, val: `${i}`, price: 50000, bg: "rgba(255, 100, 0, 0.2)" }); 
-for(let i=100; i<=115; i++) storeDB.ids.push({ name: `ID: ${i}`, val: `${i}`, price: 20000, bg: "rgba(100, 200, 255, 0.2)" }); 
-for(let i=1000; i<=1025; i++) storeDB.ids.push({ name: `ID: ${i}`, val: `${i}`, price: 10000, bg: "rgba(0, 255, 100, 0.2)" }); 
+for(let i=1; i<=3; i++) storeDB.ids.push({ name: `ID: ${i}`, val: `${i}`, price: 100000, bg: "rgba(255, 215, 0, 0.2)" }); // أحادي غالي جداً
+for(let i=10; i<=14; i++) storeDB.ids.push({ name: `ID: ${i}`, val: `${i}`, price: 50000, bg: "rgba(255, 100, 0, 0.2)" }); // ثنائي
+for(let i=100; i<=115; i++) storeDB.ids.push({ name: `ID: ${i}`, val: `${i}`, price: 20000, bg: "rgba(100, 200, 255, 0.2)" }); // ثلاثي
+for(let i=1000; i<=1025; i++) storeDB.ids.push({ name: `ID: ${i}`, val: `${i}`, price: 10000, bg: "rgba(0, 255, 100, 0.2)" }); // رباعي
 for(let i=0; i<51; i++) {
-    let r = Math.floor(Math.random()*9000000)+10000; 
+    let r = Math.floor(Math.random()*9000000)+10000; // خماسي وسداسي وسباعي
     storeDB.ids.push({ name: `ID: ${r}`, val: `${r}`, price: 2000, bg: "rgba(255, 255, 255, 0.1)" });
 }
 
-// 2. توليد 50 إطار (حيوانات مميزة + نيون عصري)
-const animalFrames = [
-    { name: "إطار النمر 🐯", val: "repeating-linear-gradient(45deg, #ea580c, #ea580c 10px, #1c1917 10px, #1c1917 20px)", price: 8000 },
-    { name: "إطار الحمار الوحشي 🦓", val: "repeating-linear-gradient(45deg, #f8fafc, #f8fafc 10px, #0f172a 10px, #0f172a 20px)", price: 7000 },
-    { name: "إطار النحلة 🐝", val: "repeating-linear-gradient(45deg, #eab308, #eab308 10px, #000 10px, #000 20px)", price: 6000 },
-    { name: "إطار الأسد 🦁", val: "radial-gradient(circle, #fcd34d 20%, #b45309 80%)", price: 10000 },
-    { name: "إطار الذئب 🐺", val: "linear-gradient(135deg, #94a3b8, #334155, #0f172a)", price: 7500 },
-    { name: "إطار الثعلب 🦊", val: "linear-gradient(135deg, #ea580c, #9a3412, #fff)", price: 6500 },
-    { name: "إطار الباندا 🐼", val: "linear-gradient(135deg, #fff 40%, #000 60%)", price: 6000 },
-    { name: "إطار التنين 🐉", val: "linear-gradient(135deg, #b91c1c, #f59e0b, #b91c1c)", price: 15000 }
-];
-storeDB.frames = [...animalFrames];
-
-const neonColors = ['#f43f5e', '#a855f7', '#3b82f6', '#10b981', '#f59e0b', '#06b6d4'];
-for(let i = animalFrames.length + 1; i <= 50; i++) {
-    let c1 = neonColors[Math.floor(Math.random()*neonColors.length)];
-    let c2 = neonColors[Math.floor(Math.random()*neonColors.length)];
+// 2. توليد 50 إطار صورة دائري
+const fColors = ['#f87171','#fb923c','#facc15','#4ade80','#2dd4bf','#3b82f6','#818cf8','#c084fc','#f472b6'];
+for(let i=1; i<=50; i++) {
+    let c1 = fColors[Math.floor(Math.random()*fColors.length)];
+    let c2 = fColors[Math.floor(Math.random()*fColors.length)];
     let grad = `linear-gradient(${Math.floor(Math.random()*360)}deg, ${c1}, ${c2})`;
-    storeDB.frames.push({ name: `إطار عصري ${i} ✨`, val: grad, price: 1500 + (i*50), bg: grad });
+    storeDB.frames.push({ name: `إطار ${i}`, val: grad, price: 1500 + (i*50), bg: grad });
 }
-storeDB.frames.forEach(f => { if(!f.bg) f.bg = f.val; });
 
 // 3. قسم الصور (Avatars)
 storeDB.avatars = [
@@ -120,7 +108,7 @@ function switchStoreTab(cat, btn) {
     storeDB[cat].forEach(item => {
         let visual = "";
         if(cat === 'ids') visual = `<div class="item-icon-large" style="font-size:2.5rem; color:#fff;">🆔</div>`;
-        else if(cat === 'frames') visual = `<div class="frame-preview" style="background:${item.val}; padding:5px;"><img src="${userData.avatar}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;"></div>`;
+        else if(cat === 'frames') visual = `<div class="frame-preview" style="background:${item.val};"></div>`;
         else if(cat === 'avatars') visual = `<img src="${item.val}" class="item-icon-large">`;
         else visual = `<div class="item-icon-large">${item.icon}</div>`;
 
@@ -138,38 +126,27 @@ function buyItem(category, name, price, value) {
     if (userData.coins >= price) {
         if(confirm(`هل تريد شراء "${name}" مقابل ${price} عملة؟`)) {
             userData.coins -= price;
+            
+            // تطبيق الميزة المشتراة
             if(category === 'ids') userData.playerID = value;
             if(category === 'frames') userData.frame = value;
             if(category === 'avatars') userData.avatar = value;
             
-            updateGlobalUI(); playSfx('correct');
+            updateGlobalUI();
+            playSfx('correct');
             alert(`🎉 مبروك! تم تطبيق "${name}" على حسابك بنجاح.`);
             document.getElementById('modalStoreBalance').innerText = `🪙 ${userData.coins}`;
         }
     } else {
-        playSfx('wrong'); alert("❌ رصيدك لا يكفي! العب أكثر لجمع العملات.");
+        playSfx('wrong');
+        alert("❌ رصيدك لا يكفي! العب أكثر لجمع العملات.");
     }
 }
 
 // ==========================================
-// 5. نظام الإنجازات الاحترافي (50 إنجاز)
+// 5. النوافذ والقوائم
 // ==========================================
-const achievements = [];
-for(let i=1; i<=50; i++) {
-    let req = i <= 10 ? i * 200 : (i <= 30 ? i * 1000 : (i <= 45 ? i * 5000 : i * 20000));
-    let name = `تحدي المستوى ${i}`;
-    let icon = "🎖️";
-    
-    // أسماء مميزة للمراحل الكبيرة
-    if(i===1) { name="الخطوة الأولى"; icon="🌱"; }
-    else if(i===10) { name="المقاتل الصاعد"; icon="⚔️"; }
-    else if(i===25) { name="المفترس الأكبر"; icon="🐅"; }
-    else if(i===40) { name="أسطورة الذكاء"; icon="💎"; }
-    else if(i===50) { name="إمبراطور اللعبة"; icon="👑"; }
-    
-    achievements.push({ id: i, name: name, desc: `الوصول إلى ${req} نقطة`, reqPoints: req, icon: icon });
-}
-
+const achievements = []; for(let i = 1; i <= 30; i++) achievements.push({ id: i, name: `تحدي المستوى ${i}`, desc: `احصل على ${i * 100} نقطة إنجاز`, reqPoints: i * 100 });
 function toggleMenu(e) { if(e) e.stopPropagation(); playSfx('menu'); const menu = document.getElementById('sideMenu'); const overlay = document.getElementById('sidebarOverlay'); menu.classList.toggle('active'); overlay.style.display = menu.classList.contains('active') ? 'block' : 'none'; }
 function closeSidebarOutside(e) { const menu = document.getElementById('sideMenu'); if (menu.classList.contains('active')) { menu.classList.remove('active'); document.getElementById('sidebarOverlay').style.display = 'none'; } }
 
@@ -192,23 +169,8 @@ function openModal(type) {
         `;
         switchStoreTab('ids', document.querySelector('.store-tab.active'));
     }
-    else if (type === 'achievements') { 
-        title.innerText = "إنجازات اللعبة 🏅"; 
-        let content = `<div class="achievements-list">`; 
-        achievements.forEach(ach => { 
-            let isUnl = userData.points >= ach.reqPoints; 
-            content += `
-                <div class="ach-card ${isUnl ? 'unlocked' : 'locked'}">
-                    <div style="display:flex; align-items:center; gap:15px;">
-                        <span class="ach-icon">${ach.icon}</span>
-                        <div><b>${ach.name}</b><br><small style="color:#aaa;">${ach.desc}</small></div>
-                    </div>
-                    <div style="font-size:1.5rem;">${isUnl ? '✅' : '🔒'}</div>
-                </div>`; 
-        }); 
-        body.innerHTML = content + `</div>`; 
-    }
     else if (type === 'developer') { title.innerText = "حساب المطور 👨‍💻"; body.innerHTML = `<div style="text-align:center; line-height:2.5;"><p><b>الاسم:</b> Baqer Hamed</p></div>`; } 
+    else if (type === 'achievements') { title.innerText = "إنجازات اللعبة 🏅"; let content = `<div class="achievements-list">`; achievements.forEach(ach => { let isUnl = userData.points >= ach.reqPoints; content += `<div class="ach-card ${isUnl ? 'unlocked' : 'locked'}"><div><b>${ach.name}</b><br><small style="color:#aaa;">${ach.desc}</small></div><div style="font-size:1.5rem;">${isUnl ? '🏆' : '🔒'}</div></div>`; }); body.innerHTML = content + `</div>`; }
     else if (type === 'settings') { title.innerText = "الإعدادات ⚙️"; body.innerHTML = `<div style="text-align:right; line-height:2.5;"><label>صوت الموسيقى 🎵</label><input type="range" min="0" max="100" value="${bgMusic.volume * 100}" oninput="updateMusicVol(this.value)" style="width:100%;"><label>مؤثرات اللعبة 🔊</label><input type="range" min="0" max="100" value="${sfxVolumeVal * 100}" oninput="updateSfxVol(this.value)" style="width:100%;"><button onclick="document.body.classList.toggle('dark-mode'); playSfx('menu');" class="premium-btn primary-btn" style="margin-top:10px;">تغيير الوضع 🌓</button></div>`; }
     else if (type === 'help') { title.innerText = "دليل اللعبة ❓"; body.innerHTML = `<div style="line-height:2; font-size:0.9rem; text-align:justify;"><h3 style="color:var(--primary);">نظام المباريات ⚔️</h3><p>المباراة تتكون من 4 مراحل ولن تبدأ الأونلاين إلا باجتماع لاعبين.</p></div>`; }
     else if (type === 'admin') { title.innerText = "لوحة التحكم 🛠️"; body.innerHTML = `<div style="display:flex; flex-direction:column; gap:10px;"><button class="premium-btn primary-btn" onclick="playSfx('play'); alert('مفعل!')">لوحة الأوامر 💻</button></div>`; }
@@ -265,9 +227,10 @@ function renderOnlinePlayers(playersObj) {
     let html = "";
     Object.keys(playersObj).forEach(key => {
         let p = playersObj[key]; let isMe = (key === userData.playerID);
+        // تم دمج صورة اللاعب وإطاره في قائمة الأونلاين!
         html += `<div class="online-player ${isMe ? 'me' : ''}">
-                    <div style="padding:4px; border-radius:50%; background:${p.frame || 'transparent'}; margin-bottom:5px; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
-                        <img src="${p.avatar}" style="width:35px; height:35px; border-radius:50%; display:block; object-fit:cover; border:2px solid #222;">
+                    <div style="padding:3px; border-radius:50%; background:${p.frame || 'transparent'}; margin-bottom:5px;">
+                        <img src="${p.avatar}" style="width:35px; height:35px; border-radius:50%; display:block;">
                     </div>
                     <span>${isMe ? 'أنت' : p.name}</span><span class="score-badge">${p.score}</span>
                  </div>`;
@@ -279,4 +242,15 @@ function loadMatchStage() {
     clearInterval(matchTimer); matchTimeLeft = 15;
     if(currentMatchStage >= 4) { endMatch(); return; }
     const stages = ['A', 'B', 'C', 'D']; const currentType = stages[currentMatchStage]; currentQData = getQuestion(currentType);
-    document.getElementById('stageIndicator').innerText = `المرحلة ${currentType}`; document.getElementById('qImageContainer').style.display = 'none'; document.getElementById('qTextContainer').style.display = 'none'; document.getElementById('matchOptionsContainer
+    document.getElementById('stageIndicator').innerText = `المرحلة ${currentType}`; document.getElementById('qImageContainer').style.display = 'none'; document.getElementById('qTextContainer').style.display = 'none'; document.getElementById('matchOptionsContainer').style.display = 'none'; document.getElementById('matchInputContainer').style.display = 'none'; document.getElementById('manualInputAnswer').value = ""; document.getElementById('matchQuestionText').innerText = currentQData.q;
+    if(currentType === 'A') { renderOptions(currentQData.a, currentQData.c); } else if(currentType === 'B') { document.getElementById('qImageContainer').style.display = 'block'; document.getElementById('qImage').src = currentQData.img; renderOptions(currentQData.a, currentQData.c); } else if(currentType === 'C') { document.getElementById('matchInputContainer').style.display = 'block'; document.getElementById('manualInputAnswer').focus(); } else if(currentType === 'D') { document.getElementById('qTextContainer').style.display = 'block'; document.getElementById('qParagraph').innerText = currentQData.text; renderOptions(currentQData.a, currentQData.c); }
+    const progress = document.getElementById('matchProgress'); progress.style.width = "100%";
+    matchTimer = setInterval(() => { matchTimeLeft--; progress.style.width = (matchTimeLeft / 15) * 100 + "%"; if(matchTimeLeft <= 3 && matchTimeLeft > 0) playSfx('timer'); if(matchTimeLeft <= 0) { playSfx('wrong'); handleAnswer(false); } }, 1000);
+}
+
+function renderOptions(arr, correctIdx) {
+    const container = document.getElementById('matchOptionsContainer'); container.style.display = 'grid'; container.innerHTML = "";
+    arr.forEach((opt, idx) => { let btn = document.createElement('button'); btn.className = "opt-btn"; btn.innerText = opt; btn.onclick = () => handleAnswer(idx === correctIdx); container.appendChild(btn); });
+}
+
+function submitManualAnswer() { const val = document.getElementById('manualInputAnswer').value.trim(); if(val === "") return; let isCorrect = v
